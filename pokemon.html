@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokePlush Paradise</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+</head>
+<body>
+    <h1>PokePlush Paradise</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="customers.html">Customers</a></li>
+            <li><a href="pokemon.html">Pokemon</a></li>
+            <li><a href="sales.html">Sales</a></li>
+            <li><a href="saleItems.html">SalesItems</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h2>Pokemon</h2>
+        <button onclick="openModal('addModal')">Add New</button>
+        <table id="pokemonTable">
+            <tr>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Plushie ID</th>
+                <th>Plushie Name</th>
+                <th>Plushie Type</th>
+                <th>Price</th>
+                <th>Stock Quantity</th>
+            </tr>
+            <!--Dynamically Inserted Rows from JS-->
+        </table>
+        
+        <script>
+            // Sample data
+            const plushies = [
+                { id: 1, name: "Pikachu", type: "Electric", price: 45.00, quantity: 100},
+                { id: 2, name: "Squirtle", type: "Water", price: 45.00, quantity: 76},
+                { id: 3, name: "Charizard", type: "Fire", price: 75.00, quantity: 26},
+                { id: 4, name: "Ivysaur", type: "Grass", price: 75.00, quantity: 100},
+                { id: 5, name: "Trubbish", type: "Poison", price: 45.00, quantity: 200},
+                { id: 6, name: "Rattata", type: "Normal", price: 25.00, quantity: 98}
+            ];
+
+            // Func to populate table
+            function populateTable() {
+                const table = document.getElementById("pokemonTable");
+
+                plushies.forEach(plush => {
+                    let row = `<tr>
+                    <td><button onclick="openEditModal(${plush.id}, '${plush.name}', '${plush.type}', ${plush.price}, ${plush.quantity})">Edit</button></td>
+                    <td><button onClick="openDeleteModal('${plush.name}')">Delete</button></td>
+                    <td>${plush.id}</td>
+                    <td>${plush.name}</td>
+                    <td>${plush.type}</td>
+                    <td>$${plush.price.toFixed(2)}</td>
+                    <td>${plush.quantity}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                });
+            }
+
+            // Populate table as page loads
+            populateTable();
+        </script>
+
+    </main>
+
+    <!--Modals-->
+
+    <!--"Add New" Modal-->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <h2>Add New</h2>
+            <form id="addPlushie">
+                <label>Plushie Name: *</label> 
+                <input type="text" id="addName" name="addName" required>
+                
+                <label>Plushie Type: *</label> 
+                <select id="addType" name="addType" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Fairy">Fairy</option>
+                </select>
+                
+                <label>Price: *</label> 
+                <input type="number" id="addPrice" name="addPrice" step="0.01" required>
+                
+                <label>Stock Quantity:</label> 
+                <input type="number" id="addQuantity" name="addQuantity">
+                
+                <button class="btn btn-add" type="submit">Add</button>
+                <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!--"Edit" Modal-->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit</h2>
+            <form id="editPlushie">
+                <input type="hidden" id="editPlushieID" name="editPlushieID">
+
+                <label>Plushie Name: *</label>
+                <input type="text" id="editName" name="editName" required>
+
+                <label>Plushie Type *</label>
+                <select id="editType" name="editType" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Fairy">Fairy</option>
+                </select>
+
+                <label>Price: *</label>
+                <input type="number" id="editPrice" name="editPrice" step="0.01" required>
+
+                <label>Stock Quantity:</label>
+                <input type="number" id="editQuantity" name="editQuantity">
+
+                <button class="btn btn-edit" type="submit">Save</button>
+                <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!--Delete Confirmation Modal-->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete <strong><span id="deleteName"></span></strong>?</p>
+            <button class="btn btn-delete" id="confirmDelete" onclick="closeModal('deleteModal')">Delete</button>
+            <button class="btn" type="button" onclick="closeModal('deleteModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(plushieName) {
+            document.getElementById('deleteName').textContent = plushieName;
+            openModal('deleteModal');
+        }
+
+        function openEditModal(plushieID, plushieName, plushieType, plushiePrice, plushieStock) {
+            document.getElementById('editPlushieID').value = plushieID;
+            document.getElementById('editName').value = plushieName;
+            const typeDropdown = document.getElementById('editType');
+            if (typeDropdown) {
+                typeDropdown.value = plushieType;
+            }
+            document.getElementById('editPrice').value = plushiePrice;
+            document.getElementById('editQuantity').value = plushieStock;
+
+            openModal('editModal');
+        }
+
+        function openModal(modalID) {
+            document.getElementById(modalID).style.display = "block";
+        }
+
+        function closeModal(modalID) {
+            document.getElementById(modalID).style.display = "none";
+        }
+    </script>
+</body>
+</html>
