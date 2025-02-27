@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <script src='main.js'></script>
     <title>Index</title>
 </head>
@@ -11,11 +12,11 @@
     
     <nav>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="customers.html">Customers</a></li>
-            <li><a href="pokemon.html">Pokemon</a></li>
-            <li><a href="sales.html">Sales</a></li>
-            <li><a href="saleItems.html">SaleItems</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('customers') }}">Customers</a></li>
+            <li><a href="{{ url_for('pokemon') }}">Pokemon</a></li>
+            <li><a href="{{ url_for('sales') }}">Sales</a></li>
+            <li><a href="{{ url_for('sale_items') }}">SaleItems</a></li>
         </ul>
     </nav>
     <section>

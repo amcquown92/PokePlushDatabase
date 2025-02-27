@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokePlush Paradise</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <script src='main.js'></script>
+    <title>PokePlush Paradise</title>
 </head>
 <body>
     <h1>PokePlush Paradise</h1>
     
     <nav>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="customers.html">Customers</a></li>
-            <li><a href="pokemon.html">Pokemon</a></li>
-            <li><a href="sales.html">Sales</a></li>
-            <li><a href="saleItems.html">SalesItems</a></li>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('customers') }}">Customers</a></li>
+            <li><a href="{{ url_for('pokemon') }}">Pokemon</a></li>
+            <li><a href="{{ url_for('sales') }}">Sales</a></li>
+            <li><a href="{{ url_for('sale_items') }}">SaleItems</a></li>
         </ul>
     </nav>
 
@@ -51,23 +50,28 @@
             // Func to populate table
             function populateTable() {
                 const table = document.getElementById("pokemonTable");
-
-                plushies.forEach(plush => {
-                    let row = `<tr>
-                    <td><button onclick="openEditModal(${plush.id}, '${plush.name}', '${plush.type}', ${plush.price}, ${plush.quantity})">Edit</button></td>
-                    <td><button onClick="openDeleteModal('${plush.name}')">Delete</button></td>
-                    <td>${plush.id}</td>
-                    <td>${plush.name}</td>
-                    <td>${plush.type}</td>
-                    <td>$${plush.price.toFixed(2)}</td>
-                    <td>${plush.quantity}</td>
-                    </tr>`;
-                    table.innerHTML += row;
-                });
+            
+                fetch('/api/pokemon')  // Get data from Flask API
+                    .then(response => response.json())
+                    .then(plushies => {
+                        plushies.forEach(plush => {
+                            let row = `<tr>
+                            <td><button onclick="openEditModal(${plush.plushieID}, '${plush.plushieName}', '${plush.plushieType}', ${plush.price}, ${plush.stockQty})">Edit</button></td>
+                            <td><button onClick="openDeleteModal('${plush.plushieName}')">Delete</button></td>
+                            <td>${plush.plushieID}</td>
+                            <td>${plush.plushieName}</td>
+                            <td>${plush.plushieType}</td>
+                            <td>$${plush.price.toFixed(2)}</td>
+                            <td>${plush.stockQty}</td>
+                            </tr>`;
+                            table.innerHTML += row;
+                        });
+                    })
+                    .catch(error => console.error('Error loading plushies:', error));
             }
-
-            // Populate table as page loads
-            populateTable();
+            
+            // Populate table on page load
+            document.addEventListener("DOMContentLoaded", populateTable);
         </script>
 
     </main>
@@ -111,7 +115,7 @@
                 <label>Stock Quantity:</label> 
                 <input type="number" id="addQuantity" name="addQuantity">
                 
-                <button class="btn btn-add" type="submit">Add</button>
+                <button class="btn btn-add" type="submit" value="Add_Pokemon">Add</button>
                 <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
             </form>
         </div>
