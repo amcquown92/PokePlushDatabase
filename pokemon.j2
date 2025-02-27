@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <title>Index</title>
+</head>
+<body>
+    <h1>PokePlush Paradise</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('customers') }}">Customers</a></li>
+            <li><a href="{{ url_for('pokemon') }}">Pokemon</a></li>
+            <li><a href="{{ url_for('sales') }}">Sales</a></li>
+            <li><a href="{{ url_for('sale_items') }}">SaleItems</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h2>Pokemon</h2>
+        <button onclick="openModal('addModal')">Add New</button>
+        <table id="pokemonTable">
+            <tr>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Plushie ID</th>
+                <th>Plushie Name</th>
+                <th>Plushie Type</th>
+                <th>Price</th>
+                <th>Stock Quantity</th>
+            </tr>
+            {% for customer in customers %}
+                <tr>
+                    <td><button onclick="openEditModal({{plush.id}}, '{{plush.name}}', '{{plush.type}}', {{plush.price}}, {{plush.quantity}})">Edit</button></td>
+                    <td><button onClick="openDeleteModal('{{plush.name}}')">Delete</button></td>
+                    <td>${{plush.id}}</td>
+                    <td>${{plush.name}}</td>
+                    <td>${{plush.type}}</td>
+                    <td>$${{plush.price.toFixed(2)}}</td>
+                    <td>${{plush.quantity}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </main>
+    <!--Modals-->
+    <!--"Add New" Modal-->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <h2>Add New</h2>
+            <form id="addPlushie">
+                <label>Plushie Name: *</label> 
+                <input type="text" id="addName" name="addName" required>
+                
+                <label>Plushie Type: *</label> 
+                <select id="addType" name="addType" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Fairy">Fairy</option>
+                </select>
+                
+                <label>Price: *</label> 
+                <input type="number" id="addPrice" name="addPrice" step="0.01" required>
+                
+                <label>Stock Quantity:</label> 
+                <input type="number" id="addQuantity" name="addQuantity">
+                
+                <button class="btn btn-add" type="submit">Add</button>
+                <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!--"Edit" Modal-->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit</h2>
+            <form id="editPlushie">
+                <input type="hidden" id="editPlushieID" name="editPlushieID">
+
+                <label>Plushie Name: *</label>
+                <input type="text" id="editName" name="editName" required>
+
+                <label>Plushie Type *</label>
+                <select id="editType" name="editType" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Fairy">Fairy</option>
+                </select>
+
+                <label>Price: *</label>
+                <input type="number" id="editPrice" name="editPrice" step="0.01" required>
+
+                <label>Stock Quantity:</label>
+                <input type="number" id="editQuantity" name="editQuantity">
+
+                <button class="btn btn-edit" type="submit">Save</button>
+                <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!--Delete Confirmation Modal-->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <p>Are you sure you want to delete <strong><span id="deleteName"></span></strong>?</p>
+            <button class="btn btn-delete" id="confirmDelete" onclick="closeModal('deleteModal')">Delete</button>
+            <button class="btn" type="button" onclick="closeModal('deleteModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(plushieName) {
+            document.getElementById('deleteName').textContent = plushieName;
+            openModal('deleteModal');
+        }
+
+        function openEditModal(plushieID, plushieName, plushieType, plushiePrice, plushieStock) {
+            document.getElementById('editPlushieID').value = plushieID;
+            document.getElementById('editName').value = plushieName;
+            const typeDropdown = document.getElementById('editType');
+            if (typeDropdown) {
+                typeDropdown.value = plushieType;
+            }
+            document.getElementById('editPrice').value = plushiePrice;
+            document.getElementById('editQuantity').value = plushieStock;
+
+            openModal('editModal');
+        }
+
+        function openModal(modalID) {
+            document.getElementById(modalID).style.display = "block";
+        }
+
+        function closeModal(modalID) {
+            document.getElementById(modalID).style.display = "none";
+        }
+    </script>
+</body>
+</html>
