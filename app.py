@@ -35,7 +35,7 @@ def sales():
 def sale_items():
     return render_template('saleItems.html')
 
-# -------------------- CRUD API ENDPOINTS -------------------- #
+# -------------------- Customers Entity CRUD -------------------- #
 
 # READ Customers
 @app.route('/api/customers', methods=['GET'])
@@ -98,12 +98,14 @@ def delete_customer(custID):
 def get_pokemon():
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT plushieID, plushieName, type, price, stockQty FROM Pokemon;")
+        cur.execute("SELECT plushieID, plushieName, plushieType, price, stockQty FROM Pokemon;")
         plushies = cur.fetchall()
     except Exception as e:
+        print("Error in get /api/pokemon:", e)
         return jsonify({"error": str(e)}), 500
     finally:
-        cur.close()
+        if cur:
+            cur.close()
     return jsonify(plushies)
 
 @app.route('/api/pokemon', methods=['POST'])
@@ -111,28 +113,30 @@ def add_pokemon():
     try:
         data = request.get_json()
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO Pokemon (plushieName, type, price, stockQty) VALUES (%s, %s, %s, %s)",
-                    (data['plushieName'], data['type'], data['price'], data['stockQty']))
+        cur.execute("INSERT INTO Pokemon (plushieName, plushieType, price, stockQty) VALUES (%s, %s, %s, %s)",
+                    (data['plushieName'], data['plushieType'], data['price'], data['stockQty']))
         mysql.connection.commit()
-        return jsonify({"message": "Pokémon plushie added successfully!"}), 201
+        return jsonify({"message": "Pokemon plushie added successfully!"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
-        cur.close()
+        if cur:
+            cur.close()
 
 @app.route('/api/pokemon/<int:plushieID>', methods=['PUT'])
 def update_pokemon(plushieID):
     try:
         data = request.get_json()
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE Pokemon SET plushieName=%s, type=%s, price=%s, stockQty=%s WHERE plushieID=%s",
-                    (data['plushieName'], data['type'], data['price'], data['stockQty'], plushieID))
+        cur.execute("UPDATE Pokemon SET plushieName=%s, plushieType=%s, price=%s, stockQty=%s WHERE plushieID=%s",
+                    (data['plushieName'], data['plushieType'], data['price'], data['stockQty'], plushieID))
         mysql.connection.commit()
         return jsonify({"message": "Pokémon plushie updated successfully!"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
-        cur.close()
+        if cur:
+            cur.close()
 
 @app.route('/api/pokemon/<int:plushieID>', methods=['DELETE'])
 def delete_pokemon(plushieID):
@@ -140,12 +144,13 @@ def delete_pokemon(plushieID):
         cur = mysql.connection.cursor()
         cur.execute("DELETE FROM Pokemon WHERE plushieID=%s", (plushieID,))
         mysql.connection.commit()
-        return jsonify({"message": "Pokémon plushie deleted successfully!"})
+        return jsonify({"message": "Pokemon plushie deleted successfully!"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:
-        cur.close()
+        if cur:
+            cur.close()
 
 # -------------------- RUN APP -------------------- #
 if __name__ == "__main__":
-    app.run(port=56543, debug=True)
+    app.run(port=56545, debug=True)

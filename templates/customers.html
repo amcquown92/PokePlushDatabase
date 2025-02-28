@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokePlush Paradise</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <!-- <script src='main.js'></script> -->
+</head>
+<body>
+    <h1>PokePlush Paradise</h1>
+    
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('customers') }}">Customers</a></li>
+            <li><a href="{{ url_for('pokemon') }}">Pokemon</a></li>
+            <li><a href="{{ url_for('sales') }}">Sales</a></li>
+            <li><a href="{{ url_for('sale_items') }}">SaleItems</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <h2>Customers</h2>
+        <button onclick="openModal('addModal')">Add New</button>
+        <table id="customerTable">
+            <tr>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Customer ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Address</th>
+            </tr>
+            <!--Dynamically Inserted Rows from JS-->
+        </table>
+        </main>
+
+        <!-- Add Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('addModal')">&times;</span>
+      <h2>Add New Customer</h2>
+      <form id="addCustomerForm">
+        <label>First Name: *</label>
+        <input type="text" id="addFirstName" required>
+        <label>Last Name: *</label>
+        <input type="text" id="addLastName" required>
+        <label>Email: *</label>
+        <input type="email" id="addEmail" required>
+        <label>Address:</label>
+        <input type="text" id="addAddress">
+        <button class="btn btn-add" type="submit">Add</button>
+        <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('editModal')">&times;</span>
+      <h2>Edit Customer</h2>
+      <form id="editCustomerForm">
+        <input type="hidden" id="editCustID">
+        <label>First Name: *</label>
+        <input type="text" id="editFirstName" required>
+        <label>Last Name: *</label>
+        <input type="text" id="editLastName" required>
+        <label>Email: *</label>
+        <input type="email" id="editEmail" required>
+        <label>Address:</label>
+        <input type="text" id="editAddress">
+        <button class="btn btn-edit" type="submit">Save</button>
+        <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+      <h2>Confirm Deletion</h2>
+      <p>Are you sure you want to delete <strong><span id="deleteName"></span></strong>?</p>
+      <button class="btn btn-delete" id="confirmDelete">Delete</button>
+      <button class="btn" type="button" onclick="closeModal('deleteModal')">Cancel</button>
+    </div>
+  </div>
+        
+  <script>
+    // Utility functions to open and close modals
+    function openModal(modalID) {
+      document.getElementById(modalID).style.display = "block";
+    }
+    function closeModal(modalID) {
+      document.getElementById(modalID).style.display = "none";
+    }
+
+    // Populate the customer table by fetching data from /api/customers
+    function populateCustomerTable() {
+      fetch('/api/customers')
+        .then(response => response.json())
+        .then(customers => {
+          const table = document.getElementById("customerTable");
+          // Rebuild the table header
+          table.innerHTML = `
+            <tr>
+              <th>Edit</th>
+              <th>Delete</th>
+              <th>Customer ID</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Address</th>
+            </tr>`;
+          customers.forEach(customer => {
+            let row = `<tr>
+              <td>
+                <button onclick="openEditModal(${customer.custID}, '${customer.firstName}', '${customer.lastName}', '${customer.email}', '${customer.address ? customer.address : ''}')">
+                  Edit
+                </button>
+              </td>
+              <td>
+                <button onclick="openDeleteModal(${customer.custID}, '${customer.firstName}', '${customer.lastName}')">
+                  Delete
+                </button>
+              </td>
+              <td>${customer.custID}</td>
+              <td>${customer.firstName}</td>
+              <td>${customer.lastName}</td>
+              <td>${customer.email}</td>
+              <td>${customer.address ? customer.address : ''}</td>
+            </tr>`;
+            table.innerHTML += row;
+          });
+        })
+        .catch(error => console.error('Error loading customers:', error));
+    }
+
+    // Load customers when the page loads
+    document.addEventListener("DOMContentLoaded", populateCustomerTable);
+
+    // Handle "Add Customer" form submission
+    document.getElementById("addCustomerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = {
+        firstName: document.getElementById("addFirstName").value,
+        lastName: document.getElementById("addLastName").value,
+        email: document.getElementById("addEmail").value,
+        address: document.getElementById("addAddress").value
+      };
+      fetch('/api/customers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to add customer.");
+        }
+        return response.json();
+      })
+      .then(() => {
+        closeModal('addModal');
+        populateCustomerTable();
+      })
+      .catch(error => console.error('Error adding customer:', error));
+    });
+
+    // Open the edit modal with pre-filled customer data
+    function openEditModal(custID, firstName, lastName, email, address) {
+      document.getElementById("editCustID").value = custID;
+      document.getElementById("editFirstName").value = firstName;
+      document.getElementById("editLastName").value = lastName;
+      document.getElementById("editEmail").value = email;
+      document.getElementById("editAddress").value = address;
+      openModal('editModal');
+    }
+
+    // Handle "Edit Customer" form submission
+    document.getElementById("editCustomerForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const custID = document.getElementById("editCustID").value;
+      const data = {
+        firstName: document.getElementById("editFirstName").value,
+        lastName: document.getElementById("editLastName").value,
+        email: document.getElementById("editEmail").value,
+        address: document.getElementById("editAddress").value
+      };
+      fetch(`/api/customers/${custID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to update customer.");
+        }
+        return response.json();
+      })
+      .then(() => {
+        closeModal('editModal');
+        populateCustomerTable();
+      })
+      .catch(error => console.error('Error updating customer:', error));
+    });
+
+    // Open the delete modal and set the deletion action
+    function openDeleteModal(custID, firstName, lastName) {
+      document.getElementById('deleteName').textContent = `${firstName} ${lastName}`;
+      document.getElementById('confirmDelete').setAttribute("onclick", `deleteCustomer(${custID})`);
+      openModal('deleteModal');
+    }
+
+    // Delete a customer via the API
+    function deleteCustomer(custID) {
+      fetch(`/api/customers/${custID}`, { method: 'DELETE' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to delete customer.");
+          }
+          return response.json();
+        })
+        .then(() => {
+          closeModal('deleteModal');
+          populateCustomerTable();
+        })
+        .catch(error => console.error('Error deleting customer:', error));
+    }
+  </script>
+</body>
+</html>
