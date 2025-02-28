@@ -1,9 +1,8 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <script src='main.js'></script>
     <title>Index</title>
 </head>
@@ -17,16 +16,17 @@
             <li><a href="{{ url_for('pokemon') }}">Pokemon</a></li>
             <li><a href="{{ url_for('sales') }}">Sales</a></li>
             <li><a href="{{ url_for('sale_items') }}">SaleItems</a></li>
+
         </ul>
     </nav>
     <section>
         <h2>Page Descriptions</h2>
         <div id="Descriptions">
-            <p><strong><a href="index.html">Home:</a></strong> Overview of the site.</p>
-            <p><strong><a href="customers.html">Customers:</a></strong> Ability to add new Customers, indicated by first and last name, email, and home address. Able to edit existing Customers or delete listed Customers.</p>
-            <p><strong><a href="pokemon.html">Pokemon:</a></strong> Ability to add new Pokémon plushies, indicating name, type, price, and stock quantity. Able to edit existing plushies or delete listed plushies.</p>
-            <p><strong><a href="sales.html">Sales:</a></strong> Ability to add sales completed by customers on indicated sale date using custID and date of sale. Also able to edit and delete existing sales.</p>
-            <p><strong><a href="saleItems.html">SaleItems:</a></strong> Ability to add individual sales items using saleID, plushieID and quantity of plushies purchased. Also able to edit and delete existing sale items.</p>
+            <p><strong><a href="{{ url_for('index') }}">Home:</a></strong> Overview of the site.</p>
+            <p><strong><a href="{{ url_for('customers') }}">Customers:</a></strong> Ability to add new Customers, indicated by first and last name, email, and home address. Able to edit existing Customers or delete listed Customers.</p>
+            <p><strong><a href="{{ url_for('pokemon') }}">Pokemon:</a></strong> Ability to add new Pokémon plushies, indicating name, type, price, and stock quantity. Able to edit existing plushies or delete listed plushies.</p>
+            <p><strong><a href="{{ url_for('sales') }}">Sales:</a></strong> Ability to add sales completed by customers on indicated sale date using custID and date of sale. Also able to edit and delete existing sales.</p>
+            <p><strong><a href="{{ url_for('sale_items') }}">SaleItems:</a></strong> Ability to add individual sales items using saleID, plushieID and quantity of plushies purchased. Also able to edit and delete existing sale items.</p>
         </div>
     </section>
 </body>

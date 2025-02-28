@@ -148,4 +148,4 @@ def delete_pokemon(plushieID):
 
 # -------------------- RUN APP -------------------- #
 if __name__ == "__main__":
-    app.run(port=56545, debug=True)
+    app.run(port=56543, debug=True)

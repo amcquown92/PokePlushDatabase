@@ -44,9 +44,31 @@
         <h2>Add New Plushie</h2>
         <form id="addPlushieForm">
             <label>Name: *</label> <input type="text" id="addName" required>
-            <label>Type: *</label> <input type="text" id="addType" required>
+            <label>Type: *</label>
+                <select id="addType" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Water">Water</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Bug">Bug</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Dark">Dark</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Fairy">Fairy</option>
+                </select>
+
             <label>Price: *</label> <input type="number" id="addPrice" step="0.01" required>
             <label>Stock Quantity: *</label> <input type="number" id="addStock" required>
+            
             <button class="btn btn-add" type="button" onclick="addPlushie()">Add</button>
             <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
         </form>
@@ -61,7 +83,8 @@
         <form id="editPlushieForm">
             <input type="hidden" id="editPlushieID">
             <label>Name: *</label> <input type="text" id="editName" required>
-            <label>Type: *</label> <input type="text" id="editType" required>
+            <label>Type: *</label>
+            <select id="editType" required></select>  <!-- Dropdown will be filled dynamically -->
             <label>Price: *</label> <input type="number" id="editPrice" step="0.01" required>
             <label>Stock Quantity: *</label> <input type="number" id="editStock" required>
             <button class="btn btn-edit" type="button" onclick="updatePlushie()">Save</button>
@@ -131,13 +154,17 @@
     }
 
     function openEditModal(id, name, type, price, stock) {
-        document.getElementById("editPlushieID").value = id;
-        document.getElementById("editName").value = name;
-        document.getElementById("editType").value = type;
-        document.getElementById("editPrice").value = price;
-        document.getElementById("editStock").value = stock;
-        openModal('editModal');
-    }
+            document.getElementById("editPlushieID").value = id;
+            document.getElementById("editName").value = name;
+            document.getElementById("editPrice").value = price;
+            document.getElementById("editStock").value = stock;
+
+            let dropdown = document.getElementById("editType");
+            dropdown.innerHTML = document.getElementById("addType").innerHTML; 
+            dropdown.value = type;  
+
+            openModal('editModal');
+        }
 
     function updatePlushie() {
         const id = document.getElementById("editPlushieID").value;
@@ -153,7 +180,16 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
-        .then(() => { closeModal('editModal'); populateTable(); })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update plushie.");
+            }
+            return response.json();
+        })
+        .then(() => {
+            closeModal('editModal'); 
+            populateTable();  // Refresh table after update
+        })
         .catch(error => console.error('Error updating plushie:', error));
     }
 
