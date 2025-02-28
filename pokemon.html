@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <script src='main.js'></script>
     <title>PokePlush Paradise</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <script src='main.js'></script>
 </head>
 <body>
     <h1>PokePlush Paradise</h1>
@@ -33,176 +34,145 @@
                 <th>Price</th>
                 <th>Stock Quantity</th>
             </tr>
-            <!--Dynamically Inserted Rows from JS-->
         </table>
-        
-        <script>
-            // Sample data
-            const plushies = [
-                { id: 1, name: "Pikachu", type: "Electric", price: 45.00, quantity: 100},
-                { id: 2, name: "Squirtle", type: "Water", price: 45.00, quantity: 76},
-                { id: 3, name: "Charizard", type: "Fire", price: 75.00, quantity: 26},
-                { id: 4, name: "Ivysaur", type: "Grass", price: 75.00, quantity: 100},
-                { id: 5, name: "Trubbish", type: "Poison", price: 45.00, quantity: 200},
-                { id: 6, name: "Rattata", type: "Normal", price: 25.00, quantity: 98}
-            ];
-
-            // Func to populate table
-            function populateTable() {
-                const table = document.getElementById("pokemonTable");
-            
-                fetch('/api/pokemon')  // Get data from Flask API
-                    .then(response => response.json())
-                    .then(plushies => {
-                        plushies.forEach(plush => {
-                            let row = `<tr>
-                            <td><button onclick="openEditModal(${plush.plushieID}, '${plush.plushieName}', '${plush.plushieType}', ${plush.price}, ${plush.stockQty})">Edit</button></td>
-                            <td><button onClick="openDeleteModal('${plush.plushieName}')">Delete</button></td>
-                            <td>${plush.plushieID}</td>
-                            <td>${plush.plushieName}</td>
-                            <td>${plush.plushieType}</td>
-                            <td>$${plush.price.toFixed(2)}</td>
-                            <td>${plush.stockQty}</td>
-                            </tr>`;
-                            table.innerHTML += row;
-                        });
-                    })
-                    .catch(error => console.error('Error loading plushies:', error));
-            }
-            
-            // Populate table on page load
-            document.addEventListener("DOMContentLoaded", populateTable);
-        </script>
-
     </main>
-
-    <!--Modals-->
-
-    <!--"Add New" Modal-->
-    <div id="addModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('addModal')">&times;</span>
-            <h2>Add New</h2>
-            <form id="addPlushie">
-                <label>Plushie Name: *</label> 
-                <input type="text" id="addName" name="addName" required>
-                
-                <label>Plushie Type: *</label> 
-                <select id="addType" name="addType" required>
-                    <option value="Normal">Normal</option>
-                    <option value="Fire">Fire</option>
-                    <option value="Water">Water</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Grass">Grass</option>
-                    <option value="Ice">Ice</option>
-                    <option value="Fighting">Fighting</option>
-                    <option value="Poison">Poison</option>
-                    <option value="Ground">Ground</option>
-                    <option value="Flying">Flying</option>
-                    <option value="Psychic">Psychic</option>
-                    <option value="Bug">Bug</option>
-                    <option value="Rock">Rock</option>
-                    <option value="Ghost">Ghost</option>
-                    <option value="Dragon">Dragon</option>
-                    <option value="Dark">Dark</option>
-                    <option value="Steel">Steel</option>
-                    <option value="Fairy">Fairy</option>
-                </select>
-                
-                <label>Price: *</label> 
-                <input type="number" id="addPrice" name="addPrice" step="0.01" required>
-                
-                <label>Stock Quantity:</label> 
-                <input type="number" id="addQuantity" name="addQuantity">
-                
-                <button class="btn btn-add" type="submit" value="Add_Pokemon">Add</button>
-                <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
-            </form>
-        </div>
+        
+ <!-- Add Modal -->
+ <div id="addModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addModal')">&times;</span>
+        <h2>Add New Plushie</h2>
+        <form id="addPlushieForm">
+            <label>Name: *</label> <input type="text" id="addName" required>
+            <label>Type: *</label> <input type="text" id="addType" required>
+            <label>Price: *</label> <input type="number" id="addPrice" step="0.01" required>
+            <label>Stock Quantity: *</label> <input type="number" id="addStock" required>
+            <button class="btn btn-add" type="button" onclick="addPlushie()">Add</button>
+            <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
+        </form>
     </div>
+</div>
 
-    <!--"Edit" Modal-->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('editModal')">&times;</span>
-            <h2>Edit</h2>
-            <form id="editPlushie">
-                <input type="hidden" id="editPlushieID" name="editPlushieID">
-
-                <label>Plushie Name: *</label>
-                <input type="text" id="editName" name="editName" required>
-
-                <label>Plushie Type *</label>
-                <select id="editType" name="editType" required>
-                    <option value="Normal">Normal</option>
-                    <option value="Fire">Fire</option>
-                    <option value="Water">Water</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Grass">Grass</option>
-                    <option value="Ice">Ice</option>
-                    <option value="Fighting">Fighting</option>
-                    <option value="Poison">Poison</option>
-                    <option value="Ground">Ground</option>
-                    <option value="Flying">Flying</option>
-                    <option value="Psychic">Psychic</option>
-                    <option value="Bug">Bug</option>
-                    <option value="Rock">Rock</option>
-                    <option value="Ghost">Ghost</option>
-                    <option value="Dragon">Dragon</option>
-                    <option value="Dark">Dark</option>
-                    <option value="Steel">Steel</option>
-                    <option value="Fairy">Fairy</option>
-                </select>
-
-                <label>Price: *</label>
-                <input type="number" id="editPrice" name="editPrice" step="0.01" required>
-
-                <label>Stock Quantity:</label>
-                <input type="number" id="editQuantity" name="editQuantity">
-
-                <button class="btn btn-edit" type="submit">Save</button>
-                <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
-            </form>
-        </div>
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('editModal')">&times;</span>
+        <h2>Edit Plushie</h2>
+        <form id="editPlushieForm">
+            <input type="hidden" id="editPlushieID">
+            <label>Name: *</label> <input type="text" id="editName" required>
+            <label>Type: *</label> <input type="text" id="editType" required>
+            <label>Price: *</label> <input type="number" id="editPrice" step="0.01" required>
+            <label>Stock Quantity: *</label> <input type="number" id="editStock" required>
+            <button class="btn btn-edit" type="button" onclick="updatePlushie()">Save</button>
+            <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
+        </form>
     </div>
+</div>
 
-    <!--Delete Confirmation Modal-->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
-            <h2>Confirm Deletion</h2>
-            <p>Are you sure you want to delete <strong><span id="deleteName"></span></strong>?</p>
-            <button class="btn btn-delete" id="confirmDelete" onclick="closeModal('deleteModal')">Delete</button>
-            <button class="btn" type="button" onclick="closeModal('deleteModal')">Cancel</button>
-        </div>
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+        <h2>Confirm Deletion</h2>
+        <p>Are you sure you want to delete <strong><span id="deleteName"></span></strong>?</p>
+        <button class="btn btn-delete" id="confirmDelete" onclick="deletePlushie()">Delete</button>
+        <button class="btn" type="button" onclick="closeModal('deleteModal')">Cancel</button>
     </div>
+</div>
 
-    <script>
-        function openDeleteModal(plushieName) {
-            document.getElementById('deleteName').textContent = plushieName;
-            openModal('deleteModal');
-        }
+<script>
+    function populateTable() {
+        fetch('/api/pokemon')
+            .then(response => response.json())
+            .then(plushies => {
+                const table = document.getElementById("pokemonTable");
+                table.innerHTML = `
+                    <tr>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                        <th>Plushie ID</th>
+                        <th>Plushie Name</th>
+                        <th>Plushie Type</th>
+                        <th>Price</th>
+                        <th>Stock Quantity</th>
+                    </tr>`;
+                plushies.forEach(plush => {
+                    let row = `<tr>
+                        <td><button onclick="openEditModal(${plush.plushieID}, '${plush.plushieName}', '${plush.plushieType}', ${plush.price}, ${plush.stockQty})">Edit</button></td>
+                        <td><button onclick="openDeleteModal(${plush.plushieID}, '${plush.plushieName}')">Delete</button></td>
+                        <td>${plush.plushieID}</td>
+                        <td>${plush.plushieName}</td>
+                        <td>${plush.plushieType}</td>
+                        <td>$${plush.price.toFixed(2)}</td>
+                        <td>${plush.stockQty}</td>
+                    </tr>`;
+                    table.innerHTML += row;
+                });
+            })
+            .catch(error => console.error('Error loading plushies:', error));
+    }
 
-        function openEditModal(plushieID, plushieName, plushieType, plushiePrice, plushieStock) {
-            document.getElementById('editPlushieID').value = plushieID;
-            document.getElementById('editName').value = plushieName;
-            const typeDropdown = document.getElementById('editType');
-            if (typeDropdown) {
-                typeDropdown.value = plushieType;
-            }
-            document.getElementById('editPrice').value = plushiePrice;
-            document.getElementById('editQuantity').value = plushieStock;
+    function addPlushie() {
+        const data = {
+            plushieName: document.getElementById("addName").value,
+            type: document.getElementById("addType").value,
+            price: parseFloat(document.getElementById("addPrice").value),
+            stockQty: parseInt(document.getElementById("addStock").value)
+        };
 
-            openModal('editModal');
-        }
+        fetch('/api/pokemon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => { closeModal('addModal'); populateTable(); })
+        .catch(error => console.error('Error adding plushie:', error));
+    }
 
-        function openModal(modalID) {
-            document.getElementById(modalID).style.display = "block";
-        }
+    function openEditModal(id, name, type, price, stock) {
+        document.getElementById("editPlushieID").value = id;
+        document.getElementById("editName").value = name;
+        document.getElementById("editType").value = type;
+        document.getElementById("editPrice").value = price;
+        document.getElementById("editStock").value = stock;
+        openModal('editModal');
+    }
 
-        function closeModal(modalID) {
-            document.getElementById(modalID).style.display = "none";
-        }
-    </script>
+    function updatePlushie() {
+        const id = document.getElementById("editPlushieID").value;
+        const data = {
+            plushieName: document.getElementById("editName").value,
+            type: document.getElementById("editType").value,
+            price: parseFloat(document.getElementById("editPrice").value),
+            stockQty: parseInt(document.getElementById("editStock").value)
+        };
+
+        fetch(`/api/pokemon/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => { closeModal('editModal'); populateTable(); })
+        .catch(error => console.error('Error updating plushie:', error));
+    }
+
+    function openDeleteModal(id, name) {
+        document.getElementById("deleteName").textContent = name;
+        document.getElementById("confirmDelete").setAttribute("onclick", `deletePlushie(${id})`);
+        openModal('deleteModal');
+    }
+
+    function deletePlushie(id) {
+        fetch(`/api/pokemon/${id}`, { method: 'DELETE' })
+        .then(() => { closeModal('deleteModal'); populateTable(); })
+        .catch(error => console.error('Error deleting plushie:', error));
+    }
+
+    function openModal(modalID) { document.getElementById(modalID).style.display = "block"; }
+    function closeModal(modalID) { document.getElementById(modalID).style.display = "none"; }
+
+    document.addEventListener("DOMContentLoaded", populateTable);
+</script>
 </body>
 </html>
