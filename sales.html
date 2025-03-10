@@ -23,7 +23,7 @@
 
     <main class="main-content">
         <h2>Sales Records</h2>
-        <button onclick="openModal('addModal')">Add New</button>
+        <button onclick="openSaleModal()">Add New</button>
         <table id="salesTable">
             <tr>
                 <th>Edit</th>
@@ -42,9 +42,16 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('addModal')">&times;</span>
             <h2>Add New Sale</h2>
+            
             <form id="addSaleForm">
-                <label>Customer ID: *</label> <input type="number" id="addCustID" required>
+            <div style="margin-bottom: 10px;">
+                <label>Customer ID: *</label> <select id="addCustID" required></select>
+            </div>
+
+            <div style="margin-bottom: 10px;">
                 <label>Sale Date: *</label> <input type="date" id="addSaleDate" required>
+            </div>
+
                 <button class="btn btn-add" type="button" onclick="addSale()">Add</button>
                 <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
             </form>
@@ -58,7 +65,10 @@
             <h2>Edit Sale</h2>
             <form id="editSaleForm">
                 <input type="hidden" id="editSaleID">
-                <label>Customer ID: *</label> <input type="number" id="editCustID" required>
+                <div style="margin-bottom: 10px;">
+                    <label>Customer ID: *</label> 
+                    <select id="editCustID" required></select>
+                </div>                
                 <label>Sale Date: *</label> <input type="date" id="editSaleDate" required>
                 <button class="btn btn-edit" type="button" onclick="updateSale()">Save</button>
                 <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
@@ -106,28 +116,60 @@
                 .catch(error => console.error('Error loading sales:', error));
         }
 
-        function addSale() {
-            const data = {
-                custID: parseInt(document.getElementById("addCustID").value),
-                saleDate: document.getElementById("addSaleDate").value
-            };
+        function openModal(modalID) {
+        document.getElementById(modalID).style.display = "block";
+        }
+        
+        function closeModal(modalID) {
+            document.getElementById(modalID).style.display = "none";
+        }
 
-            fetch('/api/sales', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(() => { closeModal('addModal'); populateTable(); })
-            .catch(error => console.error('Error adding sale:', error));
+        // ADD SALE
+        function addSale() {
+        const data = {
+            custID: parseInt(document.getElementById("addCustID").value),
+            saleDate: document.getElementById("addSaleDate").value
+        };
+
+        fetch('/api/sales', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then((result) => { 
+            console.log("Server Response:", result);
+            closeModal('addModal'); 
+            populateTable();  // Refresh table after adding a sale
+        })
+        .catch(error => console.error('Error adding sale:', error));
         }
 
         function openEditModal(id, custID, saleDate) {
             document.getElementById("editSaleID").value = id;
-            document.getElementById("editCustID").value = custID;
             document.getElementById("editSaleDate").value = saleDate;
+
+            fetch('/api/customers')
+                .then(response => response.json())
+                .then(customers => {
+                    const dropdown = document.getElementById("editCustID");
+                    dropdown.innerHTML = "";  // Clear existing options
+                    customers.forEach(customer => {
+                        let option = document.createElement("option");
+                        option.value = customer.custID;
+                        option.textContent = `${customer.custID} - ${customer.firstName} ${customer.lastName}`;
+                        dropdown.appendChild(option);
+                    });
+
+                    // Set selected value
+                    dropdown.value = custID;
+                })
+                .catch(error => console.error('Error loading customers:', error));
+
             openModal('editModal');
         }
 
+        // UPDATE SALE
         function updateSale() {
             const id = document.getElementById("editSaleID").value;
             const data = {
@@ -148,18 +190,41 @@
         document.getElementById("deleteName").textContent = name;
         document.getElementById("confirmDelete").setAttribute("onclick", `deleteSale(${id})`);
         openModal('deleteModal');
-    }
+        }
 
-    function deleteSale(id) {
-        fetch(`/api/sales/${id}`, { method: 'DELETE' })
-        .then(() => { 
-            closeModal('deleteModal'); 
-            populateTable();  // Refresh the table after deletion
-        })
-        .catch(error => console.error('Error deleting sale:', error));
-    }
+        function populateCustomerDropdown() {
+        fetch('/api/customers')
+            .then(response => response.json())
+            .then(customers => {
+                const dropdown = document.getElementById("addCustID");
+                dropdown.innerHTML = "";  // Clear existing options
+                customers.forEach(customer => {
+                    let option = document.createElement("option");
+                    option.value = customer.custID;
+                    option.textContent = `${customer.custID} - ${customer.firstName} ${customer.lastName}`;
+                    dropdown.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error loading customers:', error));
+        }
+
+        function openSaleModal() {
+            populateCustomerDropdown();
+            openModal('addModal');
+        }
+
+        // DELETE SALE
+        function deleteSale(id) {
+            fetch(`/api/sales/${id}`, { method: 'DELETE' })
+            .then(() => { 
+                closeModal('deleteModal'); 
+                populateTable();  // Refresh the table after deletion
+            })
+            .catch(error => console.error('Error deleting sale:', error));
+        }
 
         document.addEventListener("DOMContentLoaded", populateTable);
+
     </script>
 </body>
 </html>
