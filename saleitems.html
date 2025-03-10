@@ -45,7 +45,7 @@
             <span class="close" onclick="closeModal('addModal')">&times;</span>
             <h2>Add New</h2>
 
-            <form id="addSaleItem">
+            <form id="addSaleItemForm">
             <div style="margin-bottom: 10px;">
               <label>Sale ID: *</label> 
               <select id="addSaleID" required></select>
@@ -152,13 +152,22 @@
       document.addEventListener("DOMContentLoaded", populateSaleItemTable);
   
       // Handle "Add SaleItem" form submission
-      document.getElementById("addSaleItem").addEventListener("submit", function(e) {
+      document.getElementById("addSaleItemForm").addEventListener("submit", function(e) {
         e.preventDefault();
+
+        const quantity = parseInt(document.getElementById("addQuantity").value);
+
+        if (quantity <= 0) {
+          alert("Quantity must be at least 1.");
+          return;
+        }
+
         const data = {
           saleID: document.getElementById("addSaleID").value,
           plushieID: document.getElementById("addPlushieID").value,
           quantity: document.getElementById("addQuantity").value
         };
+
         fetch('/api/saleitems', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -259,31 +268,40 @@
     }
   
       // Handle "Edit SaleItem" form submission
-      document.getElementById("editSaleItem").addEventListener("submit", function(e) {
-        e.preventDefault();
-        const SaleItemID = document.getElementById("editSaleItemID").value;
-        const data = {
-            saleID: document.getElementById("editSaleID").value,
-            plushieID: document.getElementById("editPlushieID").value,
-            quantity: document.getElementById("editQuantity").value
-        };
-        fetch(`/api/saleitems/${saleItemID}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error("Failed to update Sale Item.");
+        document.getElementById("editSaleItem").addEventListener("submit", function(e) {
+          e.preventDefault();
+
+          const quantity = parseInt(document.getElementById("editQuantity").value);
+
+          if (quantity <= 0) {
+            alert("Quantity must be at least 1.");
+            return;
           }
-          return response.json();
-        })
-        .then(() => {
-          closeModal('editModal');
-          populateSaleItemTable();
-        })
-        .catch(error => console.error('Error updating Sale Item:', error));
-      });
+
+          const id = document.getElementById("editSaleItemID").value;
+          const data = {
+              saleID: document.getElementById("editSaleID").value,
+              plushieID: document.getElementById("editPlushieID").value,
+              quantity: document.getElementById("editQuantity").value
+          };
+          
+          fetch(`/api/saleitems/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Failed to update Sale Item.");
+            }
+            return response.json();
+          })
+          .then(() => {
+            closeModal('editModal');
+            populateSaleItemTable();
+          })
+          .catch(error => console.error('Error updating Sale Item:', error));
+        });
   
       // Open the delete modal and set the deletion action
       function openDeleteModal(saleItemID) {

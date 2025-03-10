@@ -6,7 +6,7 @@
     <title>PokePlush Paradise</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    <script src='main.js'></script>
+    <!-- <script src='main.js'></script> -->
 </head>
 <body>
     <h1>PokePlush Paradise</h1>
@@ -46,30 +46,30 @@
             <label>Name: *</label> <input type="text" id="addName" required>
             <label>Type: *</label>
                 <select id="addType" required>
-                    <option value="Normal">Normal</option>
-                    <option value="Fire">Fire</option>
-                    <option value="Water">Water</option>
-                    <option value="Electric">Electric</option>
-                    <option value="Grass">Grass</option>
-                    <option value="Ice">Ice</option>
-                    <option value="Fighting">Fighting</option>
-                    <option value="Poison">Poison</option>
-                    <option value="Ground">Ground</option>
-                    <option value="Flying">Flying</option>
-                    <option value="Psychic">Psychic</option>
                     <option value="Bug">Bug</option>
-                    <option value="Rock">Rock</option>
-                    <option value="Ghost">Ghost</option>
-                    <option value="Dragon">Dragon</option>
                     <option value="Dark">Dark</option>
-                    <option value="Steel">Steel</option>
+                    <option value="Dragon">Dragon</option>
+                    <option value="Electric">Electric</option>
                     <option value="Fairy">Fairy</option>
+                    <option value="Fighting">Fighting</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Flying">Flying</option>
+                    <option value="Ghost">Ghost</option>
+                    <option value="Grass">Grass</option>
+                    <option value="Ground">Ground</option>
+                    <option value="Ice">Ice</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Psychic">Psychic</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Water">Water</option>                    
                 </select>
 
-            <label>Price: *</label> <input type="number" id="addPrice" step="0.01" required>
-            <label>Stock Quantity: *</label> <input type="number" id="addStock" required>
+            <label>Price: *</label> <input type="number" id="addPrice" step="0.01" min="0" required>
+            <label>Stock Quantity: *</label> <input type="number" id="addStock" min="0" required>
             
-            <button class="btn btn-add" type="button" onclick="addPlushie()">Add</button>
+            <button class="btn btn-add" type="submit">Add</button>
             <button class="btn" type="button" onclick="closeModal('addModal')">Cancel</button>
         </form>
     </div>
@@ -127,7 +127,7 @@
                         <td>${plush.plushieID}</td>
                         <td>${plush.plushieName}</td>
                         <td>${plush.plushieType}</td>
-                        <td>$${plush.price.toFixed(2)}</td>
+                        <td>$${parseFloat(plush.price).toFixed(2)}</td>
                         <td>${plush.stockQty}</td>
                     </tr>`;
                     table.innerHTML += row;
@@ -137,20 +137,32 @@
     }
 
     function addPlushie() {
-        const data = {
-            plushieName: document.getElementById("addName").value,
-            type: document.getElementById("addType").value,
-            price: parseFloat(document.getElementById("addPrice").value),
-            stockQty: parseInt(document.getElementById("addStock").value)
-        };
+        document.getElementById("addPlushieForm").addEventListener("submit", function(e) {
+            e.preventDefault();
 
-        fetch('/api/pokemon', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => { closeModal('addModal'); populateTable(); })
-        .catch(error => console.error('Error adding plushie:', error));
+            const price = parseFloat(document.getElementById("addPrice").value);
+            const stockQty = parseInt(document.getElementById("addStock").value);
+
+            if (price < 0 || stockQty < 0) {
+                alert("Price and Stock Quantity must be non-negative.");
+                return;
+            }
+        
+            const data = {
+                plushieName: document.getElementById("addName").value,
+                plushieType: document.getElementById("addType").value,
+                price: parseFloat(document.getElementById("addPrice").value),
+                stockQty: parseInt(document.getElementById("addStock").value)
+            };
+
+            fetch('/api/pokemon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(() => { closeModal('addModal'); populateTable(); })
+            .catch(error => console.error('Error adding plushie:', error));
+        });
     }
 
     function openEditModal(id, name, type, price, stock) {
@@ -167,10 +179,18 @@
         }
 
     function updatePlushie() {
+        const price = parseFloat(document.getElementById("editPrice").value);
+        const stockQty = parseInt(document.getElementById("editStock").value);
+
+        if (price < 0 || stockQty < 0) {
+            alert("Price and Stock Quantity must be non-negative.");
+            return;
+        }
+
         const id = document.getElementById("editPlushieID").value;
         const data = {
             plushieName: document.getElementById("editName").value,
-            type: document.getElementById("editType").value,
+            plushieType: document.getElementById("editType").value,
             price: parseFloat(document.getElementById("editPrice").value),
             stockQty: parseInt(document.getElementById("editStock").value)
         };
