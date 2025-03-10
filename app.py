@@ -31,9 +31,9 @@ def pokemon():
 def sales():
     return render_template('sales.html')
 
-@app.route('/saleItems')
+@app.route('/saleitems')
 def sale_items():
-    return render_template('saleItems.html')
+    return render_template('saleitems.html')
 
 # -------------------- Customers Entity CRUD -------------------- #
 
@@ -178,7 +178,7 @@ def add_sales():
         data = request.get_json()
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO Sales (custID, saleDate) VALUES (%s, %s)",
-                    (data['custID'], data['saleData']))
+                    (data['custID'], data['saleDate']))
         mysql.connection.commit()
         return jsonify({"message": "Sale added successfully!"}), 201
     except Exception as e:
@@ -217,14 +217,16 @@ def delete_sale(saleID):
 # -------------------- SaleItems Entity CRUD -------------------- #
 
 # READ SaleItems
-@app.route('/api/saleItems', methods=['GET'])
-def get_saleItems():
+@app.route('/api/saleitems', methods=['GET'])
+def get_saleitems():
     try:
         cur = mysql.connection.cursor()
-        cur.execute("""SELECT SalesItems.saleItemID, Sales.saleID, Pokemon.plushieName,SalesItems.quantity 
-                    FROM SalesItems 
-                    INNER JOIN Sales ON SalesItems.saleID = Sales.saleID 
-                    INNER JOIN Pokemon ON SalesItems.plushieID = Pokemon.plushieID;""")
+        cur.execute("""
+            SELECT SaleItems.saleItemID, Sales.saleID, Pokemon.plushieName, SaleItems.quantity 
+            FROM SaleItems 
+            INNER JOIN Sales ON SaleItems.saleID = Sales.saleID 
+            INNER JOIN Pokemon ON SaleItems.plushieID = Pokemon.plushieID;
+        """)
         saleItems = cur.fetchall()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -233,13 +235,13 @@ def get_saleItems():
     return jsonify(saleItems)
 
 # CREATE a SaleItem
-@app.route('/api/saleItems', methods=['POST'])
-def add_customer():
+@app.route('/api/saleitems', methods=['POST'])
+def add_saleitem():
     try:
         data = request.get_json()
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO SalesItems (saleID, plushieID, quantity) VALUES (%s, %s, %s)",
-                     (data['saleID_selected'], data['plushieID_selected'], data['quantity_input']))
+        cur.execute("INSERT INTO SaleItems (saleID, plushieID, quantity) VALUES (%s, %s, %s)",
+                     (data['saleID'], data['plushieID'], data['quantity']))
         mysql.connection.commit()
         return jsonify({"message": "SaleItem added successfully!"}), 201
     except Exception as e:
@@ -248,13 +250,13 @@ def add_customer():
         cur.close()
 
 # UPDATE a SaleItem
-@app.route('/api/saleItems/<int:custID>', methods=['PUT'])
-def update_customer(saleItemID):
+@app.route('/api/saleitems/<int:saleItemID>', methods=['PUT'])
+def update_saleItem(saleItemID):
     try:
         data = request.get_json()
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE SaleItems SET saleID=%s, plushieID=%s, quantity=%s, address=%s WHERE saleItemID=%s",
-                    (data['saleID'], data['plushieID'], data['quantity'],))
+        cur.execute("UPDATE SaleItems SET saleID=%s, plushieID=%s, quantity=%s WHERE saleItemID=%s",
+                    (data['saleID'], data['plushieID'], data['quantity'], saleItemID))
         mysql.connection.commit()
         return jsonify({"message": "SaleItem updated successfully!"})
     except Exception as e:
@@ -263,8 +265,8 @@ def update_customer(saleItemID):
         cur.close()
 
 # DELETE a SaleItem
-@app.route('/api/saleItems/<int:custID>', methods=['DELETE'])
-def delete_customer(saleItemID):
+@app.route('/api/saleitems/<int:saleItemID>', methods=['DELETE'])
+def delete_saleItem(saleItemID):
     try:
         cur = mysql.connection.cursor()
         cur.execute("DELETE FROM SaleItems WHERE saleItemID=%s", (saleItemID,))
