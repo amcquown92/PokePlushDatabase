@@ -94,6 +94,8 @@ def delete_customer(custID):
         cur.close()
 
 # -------------------- Pokemon Entity CRUD -------------------- #
+
+# READ Pokemon
 @app.route('/api/pokemon', methods=['GET'])
 def get_pokemon():
     try:
@@ -108,6 +110,7 @@ def get_pokemon():
             cur.close()
     return jsonify(plushies)
 
+# CREATE new Pokemon
 @app.route('/api/pokemon', methods=['POST'])
 def add_pokemon():
     try:
@@ -123,6 +126,7 @@ def add_pokemon():
         if cur:
             cur.close()
 
+# UPDATE a Pokemon
 @app.route('/api/pokemon/<int:plushieID>', methods=['PUT'])
 def update_pokemon(plushieID):
     try:
@@ -138,6 +142,7 @@ def update_pokemon(plushieID):
         if cur:
             cur.close()
 
+# Delete a Pokemon
 @app.route('/api/pokemon/<int:plushieID>', methods=['DELETE'])
 def delete_pokemon(plushieID):
     try:
@@ -150,6 +155,64 @@ def delete_pokemon(plushieID):
     finally:
         if cur:
             cur.close()
+
+# -------------------- Sales Entity CRUD -------------------- #
+
+# READ Sales
+@app.route('/api/sales', methods=['GET'])
+def get_sales():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT saleID, custID, saleDate FROM Sales;")
+        sales = cur.fetchall()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+    return jsonify(sales)
+
+# CREATE a Sale
+@app.route('/api/sales', methods=['POST'])
+def add_sales():
+    try:
+        data = request.get_json()
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO Sales (custID, saleDate) VALUES (%s, %s)",
+                    (data['custID'], data['saleData']))
+        mysql.connection.commit()
+        return jsonify({"message": "Sale added successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# UPDATE a Sale
+@app.route('/api/sales/<int:saleID>', methods=['PUT'])
+def update_sale(saleID):
+    try:
+        data = request.get_json()
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE Sales SET custID=%s, saleDate=%s WHERE saleID=%s",
+                    (data['custID'], data['saleDate'], saleID))
+        mysql.connection.commit()
+        return jsonify({"message": "Sale updated successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# DELETE a Sale
+@app.route('/api/sales/<int:saleID>', methods=['DELETE'])
+def delete_sale(saleID):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM Sales WHERE saleID=%s", (saleID,))
+        mysql.connection.commit()
+        return jsonify({"message": "Sale deleted successfully!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
 
 # -------------------- SaleItems Entity CRUD -------------------- #
 
@@ -211,6 +274,8 @@ def delete_customer(saleItemID):
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
+
+
 # -------------------- RUN APP -------------------- #
 if __name__ == "__main__":
     app.run(port=56545, debug=True)
