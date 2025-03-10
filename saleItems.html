@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <script src='main.js'></script>
     <title>PokePlush Paradise</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <!-- <script src='main.js'></script> -->
 </head>
 <body>
     <h1>PokePlush Paradise</h1>
@@ -35,39 +35,6 @@
             <!--Dynamically Inserted Rows from JS-->
         </table>
         
-        <script>
-            // Sample data
-            const saleItems = [
-                { id: 1, saleID: 1, plushieID: 1, quantity: 1 },
-                { id: 2, saleID: 1, plushieID: 2, quantity: 1 },
-                { id: 3, saleID: 2, plushieID: 3, quantity: 1 },
-                { id: 4, saleID: 3, plushieID: 2, quantity: 1 },
-                { id: 5, saleID: 4, plushieID: 4, quantity: 1 },
-                { id: 6, saleID: 5, plushieID: 5, quantity: 1 },
-                { id: 7, saleID: 6, plushieID: 6, quantity: 1 },
-                { id: 8, saleID: 6, plushieID: 5, quantity: 1 }
-];
-
-            // Func to populate table
-            function populateTable() {
-                const table = document.getElementById("salesItemTable");
-
-                saleItems.forEach(saleItem => {
-                    let row = `<tr>
-                    <td><button onclick="openEditModal(${saleItem.id}, '${saleItem.saleID}', '${saleItem.plushieID}', '${saleItem.quantity}')">Edit</button></td>
-                    <td><button onClick="openDeleteModal(${saleItem.id})">Delete</button></td>
-                    <td>${saleItem.id}</td>
-                    <td>${saleItem.saleID}</td>
-                    <td>${saleItem.plushieID}</td>
-                    <td>${saleItem.quantity}</td>
-                    </tr>`;
-                    table.innerHTML += row;
-                });
-            }
-
-            // Populate table as page loads
-            populateTable();
-        </script>
 
     </main>
     <!--Modals-->
@@ -123,26 +90,136 @@
     </div>
 
     <script>
-        function openDeleteModal(saleItemID) {
-            document.getElementById('deleteName').textContent = saleItemID;
-            openModal('deleteModal');
-        }
-
-        function openEditModal(saleItemID, saleID, plushieID, quantity) {
-            document.getElementById('editSaleItemID').value = saleItemID;
-            document.getElementById('editSaleID').value = saleID;
-            document.getElementById('editPlushieID').value = plushieID;
-
-            openModal('editModal');
-        }
-
         function openModal(modalID) {
             document.getElementById(modalID).style.display = "block";
         }
-
         function closeModal(modalID) {
             document.getElementById(modalID).style.display = "none";
         }
+            // Populate the saleItem table by fetching data from /api/SaleItems
+    function populateSaleItemTable() {
+        fetch('/api/SaleItems')
+          .then(response => response.json())
+          .then(saleItems => {
+            const table = document.getElementById("saleItemTable");
+            // Rebuild the table header
+            table.innerHTML = `
+              <tr>
+                <th>Edit</th>
+                <th>Delete</th>
+                <th>Sale Item ID</th>
+                <th>Sale ID</th>
+                <th>Plushie ID</th>
+                <th>Quantity</th>
+              </tr>`;
+            saleItems.forEach(saleItem => {
+              let row = `<tr>
+                <td>
+                  <button onclick="openEditModal(${saleItem.saleItemID}, '${saleItem.saleID}', '${saleItem.plushieID}', '${saleItem.quantity}')">
+                    Edit
+                  </button>
+                </td>
+                <td>
+                  <button onclick="openDeleteModal(${saleItem.saleItemID})">
+                    Delete
+                  </button>
+                </td>
+                <td>${saleItem.saleItemID}</td>
+                <td>${saleItem.saleID}</td>
+                <td>${saleItem.plushieID}</td>
+                <td>${saleItem.quantity}</td>
+              </tr>`;
+              table.innerHTML += row;
+            });
+          })
+          .catch(error => console.error('Error loading saleItems:', error));
+      }
+  
+      // Load saleItems when the page loads
+      document.addEventListener("DOMContentLoaded", populateSaleItemTable);
+  
+      // Handle "Add SaleItem" form submission
+      document.getElementById("addSaleItemForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const data = {
+          saleID: document.getElementById("addSaleID").value,
+          plushieID: document.getElementById("addPlushieID").value,
+          quantity: document.getElementById("addQuantity").value
+        };
+        fetch('/api/saleItems', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to add Sale Item.");
+          }
+          return response.json();
+        })
+        .then(() => {
+          closeModal('addModal');
+          populateSaleItemTable();
+        })
+        .catch(error => console.error('Error adding Sale Item:', error));
+      });
+  
+      // Open the edit modal with pre-filled saleItem data
+      function openEditModal(saleItemID, saleID, plushieID, quantity) {
+        document.getElementById('editSaleItemID').value = saleItemID;
+        document.getElementById('editSaleID').value = saleID;
+        document.getElementById('editPlushieID').value = plushieID;
+        openModal('editModal');
+    }
+  
+      // Handle "Edit SaleItem" form submission
+      document.getElementById("editSaleItemForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const SaleItemID = document.getElementById("editSaleItemID").value;
+        const data = {
+            saleID: document.getElementById("editSaleID").value,
+            plushieID: document.getElementById("editPlushieID").value,
+            quantity: document.getElementById("editQuantity").value
+        };
+        fetch(`/api/saleItems/${saleItemID}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to update Sale Item.");
+          }
+          return response.json();
+        })
+        .then(() => {
+          closeModal('editModal');
+          populateSaleItemTable();
+        })
+        .catch(error => console.error('Error updating Sale Item:', error));
+      });
+  
+      // Open the delete modal and set the deletion action
+      function openDeleteModal(saleItemID) {
+        document.getElementById('deleteName').textContent = saleItemID;
+        document.getElementById('confirmDelete').setAttribute("onclick", `deleteSaleItem(${saleItemID})`);
+        openModal('deleteModal');
+      }
+      // Delete a saleItem via the API
+      function deleteSaleItem(saleItemID) {
+        fetch(`/api/saleItems/${saleItemID}`, { method: 'DELETE' })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Failed to delete Sale Item.");
+            }
+            return response.json();
+          })
+          .then(() => {
+            closeModal('deleteModal');
+            populateSaleItemTable();
+          })
+          .catch(error => console.error('Error deleting sale item:', error));
+      }
     </script>
 </body>
 </html>
