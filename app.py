@@ -1,4 +1,9 @@
-from flask import Flask, render_template, request, redirect, jsonify
+# Citation for this file:
+# Date: 03/15/2025
+# Adapted from: Flask Starter App - BSG People App
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
+# Type: Source Code
+# Notes: We used this guide to Flask as a reference for providing structure for App file and help running Flask and Gunicorn, but wrote our own code.from flask import Flask, render_template, request, redirect, jsonify
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
