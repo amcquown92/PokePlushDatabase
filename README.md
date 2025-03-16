@@ -2,7 +2,7 @@
 
 ## Citation
 
-This project used walkthrough estabblised in based on the Flask Starter App - README and example code.
+This project used walkthrough establised in based on the Flask Starter App - README and example code.
 
 - **Source URL:** [https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master](https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master)  
 - **Date Retrieved:** February 20th, 2025  
