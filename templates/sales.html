@@ -1,3 +1,9 @@
+# Citation for this file:
+# Date: 03/15/2025
+# Adapted from: Flask Starter App - BSG People App
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
+# Type: Source Code
+# Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code.
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,7 +71,10 @@
             <h2>Edit Sale</h2>
             <form id="editSaleForm">
                 <input type="hidden" id="editSaleID">
-                <label>Customer ID: *</label> <input type="number" id="editCustID" required>
+                <div style="margin-bottom: 10px;">
+                    <label>Customer ID: *</label> 
+                    <select id="editCustID" required></select>
+                </div>                
                 <label>Sale Date: *</label> <input type="date" id="editSaleDate" required>
                 <button class="btn btn-edit" type="button" onclick="updateSale()">Save</button>
                 <button class="btn" type="button" onclick="closeModal('editModal')">Cancel</button>
@@ -144,8 +153,25 @@
 
         function openEditModal(id, custID, saleDate) {
             document.getElementById("editSaleID").value = id;
-            document.getElementById("editCustID").value = custID;
             document.getElementById("editSaleDate").value = saleDate;
+
+            fetch('/api/customers')
+                .then(response => response.json())
+                .then(customers => {
+                    const dropdown = document.getElementById("editCustID");
+                    dropdown.innerHTML = "";  // Clear existing options
+                    customers.forEach(customer => {
+                        let option = document.createElement("option");
+                        option.value = customer.custID;
+                        option.textContent = `${customer.custID} - ${customer.firstName} ${customer.lastName}`;
+                        dropdown.appendChild(option);
+                    });
+
+                    // Set selected value
+                    dropdown.value = custID;
+                })
+                .catch(error => console.error('Error loading customers:', error));
+
             openModal('editModal');
         }
 
