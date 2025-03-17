@@ -98,6 +98,21 @@ Handles the many-to-many relationship between `Sales` and `Pokemon`.
 - `plushieID`: `int`, `not NULL`, `FK` references `Pokemon(plushieID)`
 - `quantity`: `int`, `not NULL`, `DEFAULT 1`
 - **Relationship**: M:N between `Sales` and `Pokemon`
+---
+
+## ER Diagram
+![ER Diagram](images/ERD.png)
+
+---
+
+## Schema
+![Schema](images/schema.png)
+
+---
+
+## Sample Data
+![Sample Data](images/sample_data.png)
+
 
 ---
 
