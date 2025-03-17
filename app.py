@@ -3,7 +3,8 @@
 # Adapted from: Flask Starter App - BSG People App
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
 # Type: Source Code
-# Notes: We used this guide to Flask as a reference for providing structure for App file and help running Flask and Gunicorn, but wrote our own code.from flask import Flask, render_template, request, redirect, jsonify
+# Notes: We used this guide to Flask as a reference for providing structure for App file and help running Flask and Gunicorn, but wrote our own code.
+from flask import Flask, render_template, request, redirect, jsonify
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)
@@ -168,7 +169,9 @@ def delete_pokemon(plushieID):
 def get_sales():
     try:
         cur = mysql.connection.cursor()
-        cur.execute("SELECT saleID, custID, saleDate FROM Sales;")
+        cur.execute("""SELECT Sales.saleID, Sales.custID, Customers.firstName, Customers.lastName, Sales.saleDate 
+            FROM Sales
+            JOIN Customers ON Sales.custID = Customers.custID;""")
         sales = cur.fetchall()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -227,7 +230,7 @@ def get_saleitems():
     try:
         cur = mysql.connection.cursor()
         cur.execute("""
-            SELECT SaleItems.saleItemID, Sales.saleID, Pokemon.plushieName, SaleItems.quantity 
+            SELECT SaleItems.saleItemID, Sales.saleID, Pokemon.plushieID, SaleItems.quantity 
             FROM SaleItems 
             INNER JOIN Sales ON SaleItems.saleID = Sales.saleID 
             INNER JOIN Pokemon ON SaleItems.plushieID = Pokemon.plushieID;
