@@ -1,3 +1,9 @@
+<!-- Citation for this file:
+Date: 03/15/2025
+Adapted from: Flask Starter App - BSG People App
+Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
+Type: Source Code
+Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +11,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokePlush Paradise</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
 
     <!-- <script src='main.js'></script> -->
 </head>
