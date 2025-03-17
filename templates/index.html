@@ -25,15 +25,45 @@
 
         </ul>
     </nav>
+    <main class="main-content">
+        <h2>Welcome to the PokePlush Paradise Database!</h2>
+        <p>PokePlush Paradise sells high-quality Pokémon plushies for fans and collectors alike. Our expansive 
+            collection features Pokemon from each generation, resulting in more than 1,000 different types of plushies.</p>
     <section>
-        <h2>Page Descriptions</h2>
+        <h3>Page Descriptions</h3>
         <div id="Descriptions">
-            <p><strong><a href="{{ url_for('index') }}">Home:</a></strong> Overview of the site.</p>
-            <p><strong><a href="{{ url_for('customers') }}">Customers:</a></strong> Ability to add new Customers, indicated by first and last name, email, and home address. Able to edit existing Customers or delete listed Customers.</p>
-            <p><strong><a href="{{ url_for('pokemon') }}">Pokemon:</a></strong> Ability to add new Pokémon plushies, indicating name, type, price, and stock quantity. Able to edit existing plushies or delete listed plushies.</p>
-            <p><strong><a href="{{ url_for('sales') }}">Sales:</a></strong> Ability to add sales completed by customers on indicated sale date using custID and date of sale. Also able to edit and delete existing sales.</p>
-            <p><strong><a href="{{ url_for('sale_items') }}">SaleItems:</a></strong> Ability to add individual sales items using saleID, plushieID and quantity of plushies purchased. Also able to edit and delete existing sale items.</p>
+            <table>
+                <tr>
+                    <th>Webpage</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong><a href="{{ url_for('index') }}">Home</a></strong></td>
+                    <td>Overview of the site.</td>
+                </tr>
+                <tr>
+                    <td><strong><a href="{{ url_for('customers') }}">Customers</a></strong></td>
+                    <td>Ability to add new Customers, indicated by first and last name, email, and home address. Able to edit existing Customers or delete listed Customers.</td>
+                </tr>
+                <tr>
+                    <td><strong><a href="{{ url_for('pokemon') }}">Pokemon</a></strong></td>
+                    <td>Ability to add new Pokémon plushies, indicating name, type, price, and stock quantity. Able to edit existing plushies or delete listed plushies.</td>
+                </tr>
+                <tr>
+                    <td><strong><a href="{{ url_for('sales') }}">Sales</a></strong></td>
+                    <td>Ability to add sales completed by customers on indicated sale date using custID and date of sale. Also able to edit and delete existing sales.</td>
+                </tr>
+                <tr>
+                    <td><strong><a href="{{ url_for('sale_items') }}">SaleItems</a></strong></td>
+                    <td>Ability to add individual sales items using saleID, plushieID and quantity of plushies purchased. Also able to edit and delete existing sale items.</td>
+                </tr>
+                <tr></tr>
+            </table>
         </div>
     </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Archie McQuown &amp; Isabelle Resil.</p>
+    </footer>
 </body>
 </html>
