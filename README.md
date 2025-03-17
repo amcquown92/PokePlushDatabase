@@ -110,12 +110,6 @@ Handles the many-to-many relationship between `Sales` and `Pokemon`.
 
 ---
 
-## Sample Data
-![Sample Data](images/sample_data.png)
-
-
----
-
 ## Project URL
 [PokéPlush Paradise Sales Management System](http://classwork.engr.oregonstate.edu:56545/)
 
