@@ -1,11 +1,9 @@
-<!-- 
-Citation for this file:
+<!-- Citation for this file:
 Date: 03/15/2025
 Adapted from: Flask Starter App - BSG People App
 Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
 Type: Source Code
-Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code.
--->
+Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,7 +135,6 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                 <th>Sale ID</th>
                 <th>Plushie ID</th>
                 <th>Quantity</th>
-
               </tr>`;
             saleItems.forEach(saleItem => {
               let row = `<tr>
@@ -209,7 +206,7 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                 sales.forEach(sale => {
                     let option = document.createElement("option");
                     option.value = sale.saleID;
-                    option.textContent = `Sale ${sale.saleID} - ${sale.firstName} ${sale.lastName}`;
+                    option.textContent = `Sale ${sale.saleID} - Customer ${sale.custID}`;
                     dropdown.appendChild(option);
                 });
             })
@@ -252,7 +249,7 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                 sales.forEach(sale => {
                     let option = document.createElement("option");
                     option.value = sale.saleID;
-                    option.textContent = `Sale ${sale.saleID} - ${sale.firstName} ${sale.lastName}`;
+                    option.textContent = `Sale ${sale.saleID} - Customer ${sale.custID}`;
                     dropdown.appendChild(option);
                 });
 
@@ -339,7 +336,7 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
           .catch(error => console.error('Error deleting sale item:', error));
       }
       
-      document.addEventListener("DOMContentLoaded", populateSaleItemTable);
+      document.addEventListener("DOMContentLoaded", populateTable);
 
     </script>
 </body>
