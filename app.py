@@ -169,9 +169,7 @@ def delete_pokemon(plushieID):
 def get_sales():
     try:
         cur = mysql.connection.cursor()
-        cur.execute("""SELECT Sales.saleID, Sales.custID, Customers.firstName, Customers.lastName, Sales.saleDate 
-            FROM Sales
-            JOIN Customers ON Sales.custID = Customers.custID;""")
+        cur.execute("SELECT saleID, custID, saleDate FROM Sales;")
         sales = cur.fetchall()
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -230,7 +228,7 @@ def get_saleitems():
     try:
         cur = mysql.connection.cursor()
         cur.execute("""
-            SELECT SaleItems.saleItemID, Sales.saleID, Pokemon.plushieID, SaleItems.quantity 
+            SELECT SaleItems.saleItemID, Sales.saleID, Pokemon.plushieID, Pokemon.plushieName, SaleItems.quantity 
             FROM SaleItems 
             INNER JOIN Sales ON SaleItems.saleID = Sales.saleID 
             INNER JOIN Pokemon ON SaleItems.plushieID = Pokemon.plushieID;
