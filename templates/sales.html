@@ -3,7 +3,8 @@ Date: 03/15/2025
 Adapted from: Flask Starter App - BSG People App
 Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app/tree/master/bsg_people_app
 Type: Source Code
-Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code. -->
+Notes: We used this guide to Flask as a reference for providing structure for HTML files and help running Flask and Gunicorn, but wrote our own code.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,11 +13,10 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
     <title>PokePlush Paradise</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
     <!-- <script src='main.js'></script> -->
 </head>
 <body>
@@ -41,6 +41,8 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                 <th>Delete</th>
                 <th>Sale ID</th>
                 <th>Customer ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
                 <th>Sale Date</th>
             </tr>
         </table>
@@ -111,6 +113,8 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                             <th>Delete</th>
                             <th>Sale ID</th>
                             <th>Customer ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
                             <th>Sale Date</th>
                         </tr>`;
                     sales.forEach(sale => {
@@ -119,6 +123,8 @@ Notes: We used this guide to Flask as a reference for providing structure for HT
                             <td><button onclick="openDeleteModal(${sale.saleID})">Delete</button></td>
                             <td>${sale.saleID}</td>
                             <td>${sale.custID}</td>
+                            <td>${sale.firstName}</td>
+                            <td>${sale.lastName}</td>
                             <td>${sale.saleDate}</td>
                         </tr>`;
                         table.innerHTML += row;
